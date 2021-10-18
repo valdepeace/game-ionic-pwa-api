@@ -2,12 +2,22 @@ version: '3'
 
 services:
   api:
-    image: valdepeace/game-ionic-pwa-api
-    ports:
-      - "3100:3000"
+    image: negrero/gameionicpwaapi:0.0.1  
     networks:
       - proxy
-    labels:
+    
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: 
+          - "node.role == manager"
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+      labels:
       - traefik.enable=true
       - traefik.http.routers.game-ionic-pwa-api-secured.entrypoints=web-secured
       - traefik.http.routers.game-ionic-pwa-api-secured.rule=Host(`game-ionic-pwa-api.valdepeace.com`)
@@ -15,17 +25,7 @@ services:
       - traefik.http.routers.game-ionic-pwa-api.entrypoints=web
       - traefik.http.routers.game-ionic-pwa-api.priority=1
       - traefik.http.routers.game-ionic-pwa-api.rule=Host(`game-ionic-pwa-api.valdepeace.com`)
-      - traefik.http.services.game-ionic-pwa-api.loadbalancer.server.port=80
-    volumes:
-      - gamedb_data:constraints:/home/node/app/src/resources
-    deploy:
-      mode: global
-
-      update_config:
-        parallelism: 1
-        delay: 10s
-      restart_policy:
-        condition: on-failure
+      - traefik.http.services.game-ionic-pwa-api.loadbalancer.server.port=3000
 volumes:
   gamedb_data:
 networks:
