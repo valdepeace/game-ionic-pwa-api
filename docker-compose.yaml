@@ -17,11 +17,10 @@ services:
       - traefik.http.routers.game-ionic-pwa-api.rule=Host(`game-ionic-pwa-api.valdepeace.com`)
       - traefik.http.services.game-ionic-pwa-api.loadbalancer.server.port=80
     volumes:
-      - gamedb_data:
+      - gamedb_data:constraints:/home/node/app/src/resources
     deploy:
       mode: global
       placement:
-        constraints:/home/node/app/src/resources
           - node.role == manager
       update_config:
         parallelism: 1
