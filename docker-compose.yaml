@@ -4,9 +4,9 @@ services:
   api:
     image: valdepeace/game-ionic-pwa-api
     ports:
-      - "80:3000"
+      - "3100:3000"
     networks:
-      - traefik-net
+      - proxy
     labels:
       - traefik.enable=true
       - traefik.http.routers.game-ionic-pwa-api-secured.entrypoints=web-secured
@@ -20,8 +20,7 @@ services:
       - gamedb_data:constraints:/home/node/app/src/resources
     deploy:
       mode: global
-      placement:
-          - node.role == manager
+
       update_config:
         parallelism: 1
         delay: 10s
@@ -29,3 +28,6 @@ services:
         condition: on-failure
 volumes:
   gamedb_data:
+networks:
+  proxy:
+    external: true
